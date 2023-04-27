@@ -1,0 +1,4 @@
+./MariaDB_data/*
+owncloud_files/*
+data/slapd/config/*
+data/slapd/database/*
