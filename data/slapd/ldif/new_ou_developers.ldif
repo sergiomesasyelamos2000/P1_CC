@@ -1,0 +1,5 @@
+dn: ou=Developers,dc=example,dc=org
+ou: Developers
+objectClass: top
+objectClass: organizationalUnit
+description: Parent object of all Developers accounts

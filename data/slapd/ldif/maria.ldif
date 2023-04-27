@@ -1,0 +1,13 @@
+dn: uid=maria,ou=Developers,dc=example,dc=org
+cn: mariausers
+uid: maria
+sn: 3
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+uidNumber: 501
+gidNumber: 20
+homeDirectory: /home/sergio
+loginShell: /bin/bash
+gecos: maria
+userPassword: {crypt}x

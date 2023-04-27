@@ -1,0 +1,13 @@
+dn: uid=pepe,ou=People,dc=example,dc=org
+cn: pepeusers
+uid: pepe
+sn: 3
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+uidNumber: 501
+gidNumber: 20
+homeDirectory: /home/sergio
+loginShell: /bin/bash
+gecos: pepe
+userPassword: {crypt}x

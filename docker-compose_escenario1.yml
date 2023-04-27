@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+
+  owncloud:
+    image: owncloud/server:latest
+    restart: always
+    depends_on:
+      - mariadb
+      - redis
+      - ldap
+    environment:
+      - OWNCLOUD_DOMAIN=localhost:8080
+      - OWNCLOUD_TRUSTED_DOMAINS=localhost
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=sdfsdfsdfsdfsdfsdfsdfsdf
+      - OWNCLOUD_ADMIN_PASSWORD=sdfsdfsdfsdfsdfsdfdsf
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+      - OWNCLOUD_LDAP_ENABLED=true
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - owncloud:/var/www/html
+    ports:
+      - 8080:8080
+
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./MariaDB_data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    restart: always
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis:/data
+
+  ldap:
+    image: osixia/openldap:latest
+    restart: always
+    environment:
+      - LDAP_ORGANISATION=example
+      - LDAP_DOMAIN=example.org
+      - LDAP_ROOT=dc=example,dc=org
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin
+      - LDAP_CONFIG_ADMIN_ENABLED=true
+      - LDAP_CONFIG_ADMIN_USERNAME=admin
+      - LDAP_CONFIG_ADMIN_PASSWORD=admin
+      - LDAP_ADDITIONAL_BOOTSTRAP_LDIF=/container/service/slapd/assets/test
+    volumes:
+      - ./data/slapd/database:/var/lib/ldap
+      - ./data/slapd/config:/etc/ldap/slapd.d
+      - ./data/slapd/ldif:/container/service/slapd/assets/test
+    ports:
+      - 389:389
+      - 636:636
+volumes:
+  owncloud:
+  redis:
+
